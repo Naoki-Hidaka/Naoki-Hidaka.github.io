@@ -1,10 +1,20 @@
-const staticLoadPlaces = () => [
+const createPlaces = ({ latitude, longitude }) => [
+    ['p1', -1, -1],
+    ['p2', -1,  1],
+    ['p3',  1, -1],
+    ['p4',  1,  1],
+  ].map(([label,  cy,  cx]) => ({
+    label,
+    location: {
+      latitude : latitude  + 0.000009 * cy,
+      longitude: longitude + 0.000011 * cx,
+    },
+  }));
+  
+  const models = [
     {
-      label: 'p1',
-      location: {
-        latitude:   35.8012869,
-        longitude: 139.5704352,
-      },
+      url: '#asset-eevee',
+      scale: ['0.5', '0.5', '0.5'],
     },
   ];
   
@@ -15,7 +25,7 @@ const staticLoadPlaces = () => [
         scale="${x} ${y} ${z}"
         gps-entity-place="latitude: ${latitude}; longitude: ${longitude};"
       ></a-entity>
-    `)
+    `);
   
     $entity.addEventListener(
       'loaded',
@@ -27,11 +37,8 @@ const staticLoadPlaces = () => [
   
   const renderPlace = ({ location }) => {
     const $scene = document.querySelector('a-scene');
-    const $entity = createEntity({
-      location,
-      model: '#asset-eevee',
-      scale: ['0.5', '0.5', '0.5'],
-    });
+    const { url, scale } = models[0];
+    const $entity = createEntity({ location, model: url, scale });
     $scene.appendChild($entity);
   };
   
@@ -40,7 +47,7 @@ const staticLoadPlaces = () => [
   
     const successCallback = position => {
       console.log('success', position);
-      staticLoadPlaces().forEach(renderPlace);
+      createPlaces(position.coords).forEach(renderPlace);
     };
   
     const errorCallback = error => {
